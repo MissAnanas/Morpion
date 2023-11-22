@@ -1,4 +1,4 @@
-import random
+import random 
 import os
 
 # Création d'un tableau 2D pour représenter le morpion
@@ -7,6 +7,15 @@ array = [
     [0, 0, 0],
     [0, 0, 0],
 ]
+
+# Liste pour stocker les coups
+moves = [ 
+    [0,0],  [0,1], [0,2],    
+    [1,0],  [1,1], [1,2],
+    [2,0],  [2,1], [2,2],
+]
+
+played_moves = []  # Liste pour stocker les coups joués
 
 # Dictionnaire pour associer les valeurs du tableau à des symboles
 symbols = {0: " ", 1: "X", 2: "O"}
@@ -20,8 +29,9 @@ def display_board():
         print("-" * 9)
     print("---------------------☺---------------------")
 
+# Fonction pour vérifier si un joueur a gagné ou s'il y a égalité
 def check_game_result(player):
-    # Vérifier si un joueur a gagné
+    # Vérifier les lignes, colonnes et diagonales
     for row in array:
         if all(cell == player for cell in row):
             return True, f"Joueur {player} a gagné ! Félicitations!"
@@ -39,6 +49,7 @@ def check_game_result(player):
 
     return False, ""
 
+# Fonction pour demander un entier à l'utilisateur dans une plage donnée
 def ask_int(message: str, min_val: int, max_val: int) -> int:
     while True:
         try:
@@ -50,30 +61,18 @@ def ask_int(message: str, min_val: int, max_val: int) -> int:
         except ValueError:
             print("Veuillez entrer un nombre entier valide.")
 
-# Liste pour stocker les coups
-moves = [
-    [0, 0], [0, 1], [0, 2],
-    [1, 0], [1, 1], [1, 2],
-    [2, 0], [2, 1], [2, 2],
-]
-
-played_moves = []  # Liste pour stocker les coups joués
-
+# Fonction pour effectuer un coup du joueur
 def make_player_move(player):
     while True:
         try:
-            # Créer une nouvelle liste de mouvements disponibles pour ce tour
-            current_moves = moves.copy()
-            print("Cases disponibles :", current_moves)
-            row = ask_int(f"Joueur {player}, choisissez la ligne (1 à 3) : ", 1, 3)
-            col = ask_int(f"Joueur {player}, choisissez la colonne (1 à 3) : ", 1, 3)
+            print("Cases disponibles :", moves)
+            choice = ask_int(f"Joueur {player}, choisissez un coup parmi les cases disponibles : ", 1, len(moves))
 
-            row -= 1
-            col -= 1
+            array_index = moves[choice - 1]
+            if array[array_index[0]][array_index[1]] == 0:
+                moves.remove(array_index)
+                row, col = array_index
 
-            array_index = [row, col]
-            if array_index in current_moves:
-                current_moves.remove(array_index)
                 array[row][col] = player
                 played_moves.append((row, col))
                 result, message = check_game_result(player)
@@ -84,15 +83,11 @@ def make_player_move(player):
                 if result:
                     return True
                 else:
-                    # Mettez à jour la liste globale des mouvements après chaque coup
-                    moves.clear()
-                    moves.extend(current_moves)
                     return False
             else:
                 print("Coup invalide. Choisissez une autre case.")
         except ValueError:
             print("Entrées invalides. Veuillez saisir des nombres entiers.")
-
 
 
 # Fonction principale pour jouer au morpion
@@ -138,4 +133,3 @@ def make_random_move():
 
 # Lancer le jeu
 play_tic_tac_toe()
-
