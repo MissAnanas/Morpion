@@ -66,30 +66,7 @@ def main():
 
         return False, ""
 
-    def ask_coordinates(message: str, size) -> tuple[int, int]:
-        while True:
-            try:
-                user_input = input(message)
-                if ',' in user_input:
-                    coords = user_input.replace(',', ' ').split()
-                else:
-                    if len(user_input) == 2:
-                        coords = [user_input[0], user_input[1]]
-                    else:
-                        coords = user_input.split()
-
-                if len(coords) != 2:
-                    raise ValueError("Veuillez entrer deux chiffres.")
-
-                row = int(coords[0])
-                col = int(coords[1])
-
-                if 0 <= row <= size - 1 and 0 <= col <= size - 1:
-                    return row, col
-                else:
-                    print(f"Veuillez entrer des chiffres entre 0 et {size - 1}.")
-            except ValueError as e:
-                print(f"Entrée invalide : {e}")
+    
 
     def make_player_move(array, symbol, moves, played_moves, size, win_condition):
         while True:
@@ -126,8 +103,6 @@ def main():
             return blocking_move
 
         return get_random_move(moves) 
-
-
 
     # Fonction pour trouver un coup gagnant
     def find_winning_move(array, moves, size, win_condition, symbol, played_moves):
