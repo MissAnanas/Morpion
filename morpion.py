@@ -122,38 +122,117 @@ while True:
             else:
                 return None
 
-        def get_ai_move(array: list[list[int]], moves: list[tuple[int]], size: int, win_condition: int, last_move: tuple[int, int]) -> tuple[int]:
+        def get_ai_move(array: list[list[int]], moves: list[tuple[int]], size: int, win_condition: int) -> tuple[bool, tuple[int, int]]:
             # Recherche d'une victoire possible pour l'IA
-            winning_move = find_winning_move(array, moves, size, win_condition, 2, last_move)
+            winning_move = find_winning_move(array, moves, size, win_condition, 1)
             if winning_move:
-                return winning_move
+                return False, winning_move
 
             # Recherche d'une victoire possible pour le joueur pour bloquer
-            blocking_move = find_winning_move(array, moves, size, win_condition, 1, last_move)
+            blocking_move = find_winning_move(array, moves, size, win_condition, 2)
             if blocking_move:
-                return blocking_move
+                return False, blocking_move
 
-            return get_random_move(moves)
+            return True, get_random_move(moves)
 
         # Fonction pour trouver un coup gagnant
-        def find_winning_move(array: list[list[int]], moves: list[tuple[int]], size: int, winning_symbol_count: int, symbol: int) -> [list[int], None]:
+        def find_winning_move(array: list[list[int]], moves: list[tuple[int]], size: int, winning_symbol_count: int, symbol: int) -> tuple[bool, tuple[int, int]]:
             for move in moves:
                 row, col = move
                 array[row][col] = symbol  # Simuler le coup du joueur ou de l'IA
                 if check_game_result(array, symbol, size, winning_symbol_count, move)[0]:
                     array[row][col] = 0  # Réinitialiser le coup
-                    return move
+                    return False, move
                 array[row][col] = 0  # Réinitialiser le coup après la vérification
 
-            return None, None
+            return True, get_random_move(moves)
 
-        def getCustomGrid() -> list[list[int]]:
-            return \
+        def getCustomGrid(i) -> tuple[list[list[int]], tuple[int, int], tuple[int, int] ] :
+            custom_grid = \
                 [
-                    [1, 1, 0],
-                    [0, 0, 0],
-                    [0, 0, 0],
+                    [
+                        [1, 2, 0],
+                        [1, 2, 0],
+                        [0, 0, 0],
+                    ], \
+                    [
+                        [1, 0, 0],
+                        [0, 1, 0],
+                        [0, 0, 0],
+                    ],\
+                    [
+                        [1, 0, 2],
+                        [0, 1, 2],
+                        [0, 0, 0],
+                    ],\
+                    [
+                        [1, 1, 0],
+                        [0, 1, 0],
+                        [0, 2, 2],
+                    ],\
+                    [
+                        [1, 2, 0],
+                        [0, 1, 0],
+                        [0, 0, 2],
+                    ]
                 ]
+            expected_results_win = \
+                [
+                    [2, 0],
+                    [2, 2],
+                    [2, 2],
+                    [0, 2],
+                    ["Random"]
+                ]
+            expected_results_block = \
+                [
+                    [2, 1],
+                    [2, 2],
+                    [2, 2],
+                    [2, 0],
+                    ["Random"]
+                ]
+
+            return custom_grid[i], expected_results_win[i], expected_results_block[i]
+        
+        def testGrid(i):
+            array, expected_win_move, expected_block_move = getCustomGrid(i)
+            size = len(array)
+            moves = get_available_tile(array)
+            # best_move: tuple[int, int] = find_winning_move(array, moves, size, 3, 1 )
+            is_random_block, best_move_block = get_ai_move(array, moves, size, 3)
+            is_random_win, best_move = find_winning_move(array, moves, size, 3, 1)
+            print("Custom Grid:")
+            for row in array:
+                print(row)
+
+            """if expected_win_move == best_move:
+                print("Win Succes")
+            elif expected_block_move == best_move_block:
+                print("Block Succes")
+            elif find_winning_move == True:
+                print("Random Win Succes -> move :",best_move)
+            elif get_ai_move == True:
+                print("Random Block Succes -> move :",best_move_block)
+            else:
+                print("Error happend")"""
+                
+            if expected_win_move == best_move:
+                print("Win Success")
+            elif expected_block_move == best_move_block:
+                print("Block Success")
+            elif is_random_win:
+                print("Random Win Success -> move :", best_move)
+            elif is_random_block:
+                print("Random Block Success -> move :", best_move_block)
+            else:
+                print("Error happened")
+
+            #print("Expected Win Move:", expected_win_move)
+            #print("Expected Block Move:", expected_block_move)
+
+            #print("Actual Win Move:", best_move)
+            #print("Actual Block Move:", best_move_block)
         
         def get_available_tile(grid) -> list[list[int]]:
             available_tiles = []
@@ -202,13 +281,9 @@ while True:
                             symbol = 3 - symbol
 
         #play_tictactoe()
-        array = getCustomGrid()
-        size = len(array)
-        moves = get_available_tile(array)
-        best_move: tuple[int, int] = find_winning_move(array, moves, size, 3, 1 )
-        print(best_move)
+        
 
-
+        testGrid(4)
         
 
 

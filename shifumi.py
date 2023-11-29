@@ -28,8 +28,8 @@ while True:
         def initialize_game():
             print("---------------------☺---------------------")
             min_val = 3
-            max_val = 100
-            size = ask_int("Entrez la taille du morpion (min 3, max 100) : ", min_val, max_val)
+            max_val = 10000
+            size = ask_int("Entrez la taille du morpion (min 3, max 10000) : ", min_val, max_val)
             if size < min_val:
                 print(f"La taille minimale du morpion doit être {min_val}.")
                 return initialize_game()
@@ -49,26 +49,52 @@ while True:
                 print("-" * (4 * size - 2))
             print("---------------------☺---------------------")
 
-        def check_game_result(array: list[list[int]], symbol, size, win_condition, last_move) -> tuple[bool, str]:
+        def check_game_result(array: list[list[int]], symbol: int, size: int, win_condition: int, last_move: tuple[int, int]) -> tuple[bool, str]:
             row, col = last_move
 
             # Vérifier la ligne
-            if col + win_condition <= size and all(array[row][i] == symbol for i in range(col, col + win_condition)):
+            line_win = True
+            for i in range(size):
+                if array[row][i] != symbol:
+                    line_win = False
+                    break
+            if line_win:
                 return True, f"Joueur {symbol} a gagné ! Félicitations!"
 
             # Vérifier la colonne
-            if row + win_condition <= size and all(array[i][col] == symbol for i in range(row, row + win_condition)):
-                return True, f"Joueur {symbol} a gagné ! Félicitations!"
+            col_win = True
+            for i in range(size):
+                if array[i][col] != symbol:
+                    col_win = False
+                    break
+            if col_win:
+                return True, f"Joueur {symbol} a gagné ! Félicitations."
 
             # Vérifier la diagonale principale
-            if row - win_condition + 1 >= 0 and col - win_condition + 1 >= 0 and all(array[row - i][col - i] == symbol for i in range(win_condition)):
+            main_diag_win = True
+            for i in range(win_condition):
+                if row - i < 0 or col - i < 0 or array[row - i][col - i] != symbol:
+                    main_diag_win = False
+                    break
+            if main_diag_win:
                 return True, f"Joueur {symbol} a gagné ! Félicitations."
 
             # Vérifier l'anti-diagonale
-            if row - win_condition + 1 >= 0 and col + win_condition - 1 < size and all(array[row - i][col + i] == symbol for i in range(win_condition)):
+            anti_diag_win = True
+            for i in range(win_condition):
+                if row - i < 0 or col + i >= size or array[row - i][col + i] != symbol:
+                    anti_diag_win = False
+                    break
+            if anti_diag_win:
                 return True, f"Joueur {symbol} a gagné ! Félicitations."
 
-            if all(array[i][j] != 0 for i in range(size) for j in range(size)):
+            match_nul = True
+            for i in range(size):
+                for j in range(size):
+                    if array[i][j] == 0:
+                        match_nul = False
+                        break
+            if match_nul:
                 return True, "La partie est terminée. Match nul!"
 
             return False, ""
