@@ -126,14 +126,14 @@ while True:
             # Recherche d'une victoire possible pour l'IA
             winning_move = find_winning_move(array, moves, size, win_condition, 1)
             if winning_move:
-                return False, winning_move
+                return True, winning_move
 
             # Recherche d'une victoire possible pour le joueur pour bloquer
             blocking_move = find_winning_move(array, moves, size, win_condition, 2)
             if blocking_move:
-                return False, blocking_move
+                return True, blocking_move
 
-            return True, get_random_move(moves)
+            return False, get_random_move(moves)
 
         # Fonction pour trouver un coup gagnant
         def find_winning_move(array: list[list[int]], moves: list[tuple[int]], size: int, winning_symbol_count: int, symbol: int) -> tuple[bool, tuple[int, int]]:
@@ -221,12 +221,15 @@ while True:
                 print("Win Success")
             elif expected_block_move == best_move_block:
                 print("Block Success")
-            elif is_random_win:
-                print("Random Win Success -> move :", best_move)
             elif is_random_block:
                 print("Random Block Success -> move :", best_move_block)
+            elif is_random_win:
+                print("Random Win Success -> move :", best_move)
             else:
                 print("Error happened")
+
+            
+            
 
             #print("Expected Win Move:", expected_win_move)
             #print("Expected Block Move:", expected_block_move)
