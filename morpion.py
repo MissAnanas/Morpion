@@ -6,6 +6,7 @@ while True:
 
     def create_board(size: int) -> list[list[int]]:
         return [[0 for _ in range(size)] for _ in range(size)]
+           
 
     def main():
         print("---------------------☺---------------------")
@@ -142,10 +143,10 @@ while True:
                 array[row][col] = symbol  # Simuler le coup du joueur ou de l'IA
                 if check_game_result(array, symbol, size, winning_symbol_count, move)[0]:
                     array[row][col] = 0  # Réinitialiser le coup
-                    return False, move
+                    return True, move
                 array[row][col] = 0  # Réinitialiser le coup après la vérification
 
-            return True, get_random_move(moves)
+            return False, get_random_move(moves)
 
         def getCustomGrid(i) -> tuple[list[list[int]], tuple[int, int], tuple[int, int] ] :
             custom_grid = \
@@ -174,7 +175,7 @@ while True:
                         [1, 2, 0],
                         [0, 1, 0],
                         [0, 0, 2],
-                    ]
+                    ],                  
                 ]
             expected_results_win = \
                 [
@@ -206,37 +207,22 @@ while True:
             for row in array:
                 print(row)
 
-            """if expected_win_move == best_move:
-                print("Win Succes")
-            elif expected_block_move == best_move_block:
-                print("Block Succes")
-            elif find_winning_move == True:
-                print("Random Win Succes -> move :",best_move)
-            elif get_ai_move == True:
-                print("Random Block Succes -> move :",best_move_block)
-            else:
-                print("Error happend")"""
-                
             if expected_win_move == best_move:
                 print("Win Success")
-            elif expected_block_move == best_move_block:
+            elif expected_block_move == best_move_block[1]:
                 print("Block Success")
-            elif is_random_block:
-                print("Random Block Success -> move :", best_move_block)
-            elif is_random_win:
+
+            if is_random_block:
+                print("Random Block Success -> move :", best_move_block[1])
+            else:
+                print("Error happened ! Expected move :",best_move_block[1])
+
+            if is_random_win:
                 print("Random Win Success -> move :", best_move)
             else:
-                print("Error happened")
+                print("Error happened ! Expected move :",best_move)
 
             
-            
-
-            #print("Expected Win Move:", expected_win_move)
-            #print("Expected Block Move:", expected_block_move)
-
-            #print("Actual Win Move:", best_move)
-            #print("Actual Block Move:", best_move_block)
-        
         def get_available_tile(grid) -> list[list[int]]:
             available_tiles = []
             for i in range(len(grid)):
@@ -249,7 +235,7 @@ while True:
             symbol: int = 1
             array = initialize_game()
             size = len(array)
-            moves = get_available_tile(array)      #[[i, j] for i in range(size) for j in range(size)]
+            moves = [[i, j] for i in range(size) for j in range(size)]
             win_condition = ask_win_condition(size)
             last_move: tuple[int, int] = None
 
@@ -266,7 +252,7 @@ while True:
                     if last_move is None:
                         print("Error")
 
-                    ai_move = get_ai_move(array, moves, size, win_condition, last_move)
+                    is_random_move, ai_move = get_ai_move(array, moves, size, win_condition)
                     if ai_move:
                         row, col = ai_move
                         array[row][col] = symbol
@@ -283,16 +269,18 @@ while True:
                                 moves.remove([row, col])
                             symbol = 3 - symbol
 
-        #play_tictactoe()
-        
-
-        testGrid(4)
-        
+        play_tictactoe()
 
 
+        reponse = input("Souhaitez-vous tester des coups (Y/N) ? ")
+        if reponse.upper() == "Y":
+            array = initialize_game()
+            play_tictactoe.moves = get_available_tile(array)
+            testGrid(ask_int("Quelle grille voulez-vous tester ?", 0, 4))
+            
 
     main()
-'''
+
     reponse = print("---------------------☺------------------")
     reponse = input("Souhaitez-vous relancer une partie (Y/N) ?")
     if reponse.upper() != "Y":
@@ -300,4 +288,3 @@ while True:
         print("Merci d'avoir joué ! A bientôt :)")
         print("---------------------☺---------------------")
         break
-'''
