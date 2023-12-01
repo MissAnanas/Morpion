@@ -125,13 +125,13 @@ while True:
 
         def get_ai_move(array: list[list[int]], moves: list[tuple[int]], size: int, win_condition: int) -> tuple[bool, tuple[int, int]]:
             # Recherche d'une victoire possible pour l'IA
-            winning_move = find_winning_move(array, moves, size, win_condition, 1)
-            if winning_move:
+            is_winning_move, winning_move = find_winning_move(array, moves, size, win_condition, 1)
+            if is_winning_move:
                 return True, winning_move
 
             # Recherche d'une victoire possible pour le joueur pour bloquer
-            blocking_move = find_winning_move(array, moves, size, win_condition, 2)
-            if blocking_move:
+            is_blocking_move, blocking_move = find_winning_move(array, moves, size, win_condition, 2)
+            if is_blocking_move:
                 return True, blocking_move
 
             return False, get_random_move(moves)
@@ -148,7 +148,7 @@ while True:
 
             return False, get_random_move(moves)
 
-        def getCustomGrid(i) -> tuple[list[list[int]], tuple[int, int], tuple[int, int] ] :
+        """def getCustomGrid(i) -> tuple[list[list[int]], tuple[int, int], tuple[int, int] ] :
             custom_grid = \
                 [
                     [
@@ -230,7 +230,7 @@ while True:
                     if grid[i][j] == 0:
                         available_tiles.append((i, j))
             return available_tiles
-
+"""
         def play_tictactoe():
             symbol: int = 1
             array = initialize_game()
@@ -247,13 +247,12 @@ while True:
                     result, last_move = make_player_move(array, symbol, moves, size, win_condition)
                     if result:
                         break
-                    symbol = 3 - symbol
                 else:
                     if last_move is None:
                         print("Error")
 
                     is_random_move, ai_move = get_ai_move(array, moves, size, win_condition)
-                    if ai_move:
+                    if is_random_move:
                         row, col = ai_move
                         array[row][col] = symbol
                         last_move = (row, col)
@@ -263,20 +262,21 @@ while True:
                         print(ai_move)
                         if result:
                             break
-                        else:
-                            # Vérifier si le mouvement est présent dans la liste avant de le supprimer
-                            if [row, col] in moves:
-                                moves.remove([row, col])
-                            symbol = 3 - symbol
+
+                # Mise à jour de symbol ici après que le joueur ou l'IA ait joué
+                symbol = 3 - symbol
+
+            # Fin de la partie, affichez le tableau final
+            display_board(array, size)
 
         play_tictactoe()
 
 
-        reponse = input("Souhaitez-vous tester des coups (Y/N) ? ")
+        """reponse = input("Souhaitez-vous tester des coups (Y/N) ? ")
         if reponse.upper() == "Y":
             array = initialize_game()
             play_tictactoe.moves = get_available_tile(array)
-            testGrid(ask_int("Quelle grille voulez-vous tester ?", 0, 4))
+            testGrid(ask_int("Quelle grille voulez-vous tester ?", 0, 4))"""
             
 
     main()
